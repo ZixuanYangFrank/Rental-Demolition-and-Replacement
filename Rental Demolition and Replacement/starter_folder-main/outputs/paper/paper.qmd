@@ -1,0 +1,150 @@
+---
+title: "Analyzing the Impact of Rental Housing Demolition and Replacement Policies Since 2018"
+subtitle: "My subtitle if needed"
+author: "Zixuan Yang"
+thanks: "Code and data are available at: LINK."
+date: today
+date-format: long
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+# Introduction
+
+In recent years, the City of Toronto has witnessed a significant transformation in its housing landscape, particularly in the realm of rental accommodations. This shift is primarily characterized by the approved projects for the demolition and replacement of rental units, a phenomenon that has gained momentum since January 1, 2018. The dataset used in this article systematically chronicles these developments, providing insight into the changing character of Toronto's urban housing. It covers a wide variety of developments, including inexpensive, mid-range, and high-end rental apartments, presenting a comprehensive picture of the city's approach to housing reform. This article tries to deconstruct these tendencies and provide insights into the larger ramifications of these housing regulations for the city's socioeconomic fabric. By analysing the data, we strive to understand the patterns and reasons underlying these changes, as well as their effect on Toronto inhabitants and the urban environment.
+
+# Data {#sec-data}
+```{r setup}
+library(tidyverse) # For data manipulation
+library(haven)     # For reading and writing data
+library(lubridate) # For handling dates
+library(scales)    # For fixing date and time axes in visualizations
+library(DescTools) # For formatting graph labels
+library(kableExtra) # For formatting tables
+library(bookdown)  # For formatting the report
+
+```
+In this section, we employ the R statistical programming language, utilizing packages like tidyverse for data manipulation and haven for data reading and writing. The lubridate package aids in handling dates, while scales and DescTools enhance data visualization. Tables are formatted using kableExtra, and the report is structured with bookdown.
+
+## Data Overview
+
+Our dataset, derived from the Open Data Toronto portal, details the demolition and replacement of rental housing units in Toronto since January 1, 2018. It includes data on the total number of rental homes demolished and replaced, categorized by affordability based on CMHC's Average Market Rent. Additional details include property addresses, types of applications (demolition or conversion), and City Council approval dates. This dataset provides a nuanced understanding of Toronto's evolving housing landscape and facilitates an exploration of the socio-economic implications of these urban redevelopment policies.
+
+The analysis involves evaluating the distribution of demolished and replaced rental homes across different affordability categories and their geographic spread within Toronto. We also examine the temporal trends in the approval and execution of these housing projects. The dataset's comprehensiveness allows for a multifaceted analysis, shedding light on the impact of housing policies on the city's rental housing market.
+
+```{r}
+#| label: fig-bills
+#| fig-cap: Bills of penguins
+#| echo: false
+
+ggplot(penguins, aes(x = island, fill = species)) +
+  geom_bar(alpha = 0.8) +
+  scale_fill_manual(values = c("darkorange","purple","cyan4"),
+                    guide = "none") +
+  theme_minimal() +
+  facet_wrap(~species, ncol = 1) +
+  coord_flip()
+```
+
+Talk more about it.
+
+And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+
+```{r}
+#| label: fig-planes
+#| fig-cap: Relationship between wing length and width
+#| echo: false
+#| warning: false
+#| message: false
+
+analysis_data <- read_csv(here::here("outputs/data/analysis_data.csv"))
+
+analysis_data |> 
+  ggplot(aes(x = width, y = length)) +
+  geom_point(alpha = 0.8) +
+  theme_minimal() +
+  labs(x = "Wing width (mm)",
+       y = "Wing length (mm)")
+```
+
+Talk way more about it.
+
+# Model
+
+The goal of our modelling strategy is twofold. Firstly,...
+
+Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+
+## Model set-up
+
+Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
+
+```{=tex}
+\begin{align} 
+y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
+\mu_i &= \alpha + \beta_i + \gamma_i\\
+\alpha &\sim \mbox{Normal}(0, 2.5) \\
+\beta &\sim \mbox{Normal}(0, 2.5) \\
+\gamma &\sim \mbox{Normal}(0, 2.5) \\
+\sigma &\sim \mbox{Exponential}(1)
+\end{align}
+```
+We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+
+### Model justification
+
+We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+
+We can use maths by including latex between dollar signs, for instance $\theta$.
+
+# Results
+
+Our results are summarized in @tbl-modelresults.
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+library(rstanarm)
+
+first_model <-
+  readRDS(file = here::here("outputs/models/first_model.rds"))
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-modelresults
+#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| warning: false
+
+modelsummary::modelsummary(
+  list(
+    "First model" = first_model
+  ),
+  statistic = "mad",
+  fmt = 2
+)
+```
+
+# Discussion
+
+## First discussion point {#sec-first-point}
+
+If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
+
+## Second discussion point
+
+## Third discussion point
+
+## Weaknesses and next steps
+
+Weaknesses and next steps should also be included.
+
+\newpage
+
+# References
